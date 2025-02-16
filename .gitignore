@@ -1,0 +1,43 @@
+# Byte-compiled files
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+#spec文件
+*.spec
+
+# cursorrules文件
+.cursorrules
+
+# pyenv
+.python-version
+
+# pytest
+.cache
+
+# Other
+!.gitignore 
