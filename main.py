@@ -28,7 +28,7 @@ class LogMonitor(FileSystemEventHandler):
     def __init__(self, vehicle_code=None):
         # 自动获取用户名并确定监控日志文件路径
         username = os.getenv('USERNAME') or os.getenv('USER')
-        self.log_file = os.path.join('C:', 'Users', username, 'AppData', 'Local', 'SquadGame', 'Saved', 'Logs', 'SquadGame.log')
+        self.log_file = os.path.join('C:\\', 'Users', username, 'AppData', 'Local', 'SquadGame', 'Saved', 'Logs', 'SquadGame.log')
         self.last_position = self.get_last_position()
         self.keyboard = Controller()
         self.task_completed = False

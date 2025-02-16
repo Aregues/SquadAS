@@ -70,18 +70,18 @@ class SquadToolGUI:
         """环境检查函数"""
         try:
             username = os.getenv('USERNAME') or os.getenv('USER')
-            # 使用规范化的路径
-            log_path = os.path.normpath(os.path.join(
-                'C:',
+            # 使用正确的路径格式
+            log_path = os.path.join(
+                'C:\\',  # 使用双反斜杠确保正确的路径分隔
                 'Users',
                 username,
                 'AppData',
                 'Local',
-                'SquadGame',  # 确保大小写正确
+                'SquadGame',
                 'Saved',
                 'Logs',
                 'SquadGame.log'
-            ))
+            )
             
             self.log_message(f"初始化信息:")
             self.log_message(f"当前用户: {username}")
@@ -124,12 +124,21 @@ class SquadToolGUI:
         self.log_text.delete(1.0, tk.END)
         
         try:
-            # 检查运行环境
             username = os.getenv('USERNAME') or os.getenv('USER')
             if not username:
                 raise ValueError("无法获取用户名")
                 
-            log_path = os.path.join('C:', 'Users', username, 'AppData', 'Local', 'SquadGame', 'Saved', 'Logs', 'SquadGame.log')
+            log_path = os.path.join(
+                'C:\\',
+                'Users',
+                username,
+                'AppData',
+                'Local',
+                'SquadGame',
+                'Saved',
+                'Logs',
+                'SquadGame.log'
+            )
             self.log_message(f"环境检查:")
             self.log_message(f"程序运行位置: {os.getcwd()}")
             self.log_message(f"日志文件路径: {log_path}")
