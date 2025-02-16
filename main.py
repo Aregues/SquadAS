@@ -17,6 +17,7 @@ Apc = {
     "Stryker": "SCK_M2",
     "Stryker_1128": "1128",
     "LAV": "lav",
+    "BLDL": "BLDL",
     "ZBL08": "0808",
     "BMD4M": "4M4M",
     "ZCCRWS": "ZCCRWS",
