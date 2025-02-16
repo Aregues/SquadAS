@@ -26,8 +26,9 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.exe
 
-#spec文件
+# spec文件
 *.spec
 
 # cursorrules文件

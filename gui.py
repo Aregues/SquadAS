@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 import time
@@ -18,7 +19,11 @@ class SquadToolGUI:
         self.event_handler = None
         self.is_monitoring = False
         
+        # 先创建界面控件
         self.create_widgets()
+        
+        # 然后进行初始化检查
+        self.check_environment()
         
     def create_widgets(self):
         # 创建载具选择框
@@ -61,6 +66,49 @@ class SquadToolGUI:
         scrollbar.pack(side='right', fill='y')
         self.log_text.configure(yscrollcommand=scrollbar.set)
         
+    def check_environment(self):
+        """环境检查函数"""
+        try:
+            username = os.getenv('USERNAME') or os.getenv('USER')
+            # 使用规范化的路径
+            log_path = os.path.normpath(os.path.join(
+                'C:',
+                'Users',
+                username,
+                'AppData',
+                'Local',
+                'SquadGame',  # 确保大小写正确
+                'Saved',
+                'Logs',
+                'SquadGame.log'
+            ))
+            
+            self.log_message(f"初始化信息:")
+            self.log_message(f"当前用户: {username}")
+            self.log_message(f"日志文件路径: {log_path}")
+            
+            # 检查路径是否存在的详细信息
+            exists = os.path.exists(log_path)
+            self.log_message(f"文件是否存在: {exists}")
+            if not exists:
+                # 检查父目录
+                parent_dir = os.path.dirname(log_path)
+                self.log_message(f"父目录是否存在: {os.path.exists(parent_dir)}")
+                self.log_message(f"父目录: {parent_dir}")
+                
+                # 列出父目录中的文件（如果目录存在）
+                if os.path.exists(parent_dir):
+                    try:
+                        files = os.listdir(parent_dir)
+                        self.log_message(f"目录内容: {files}")
+                    except Exception as e:
+                        self.log_message(f"无法读取目录内容: {str(e)}")
+            
+            self.log_message(f"当前工作目录: {os.getcwd()}")
+            
+        except Exception as e:
+            self.log_message(f"初始化检查出错: {str(e)}")
+        
     def log_message(self, message):
         """添加日志消息到显示区域"""
         current_time = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -74,26 +122,56 @@ class SquadToolGUI:
             
         # 清除之前的日志
         self.log_text.delete(1.0, tk.END)
-            
-        # 从选择的字符串中提取载具代码
-        vehicle_code = self.vehicle_var.get().split('(')[1].strip(')')
         
         try:
-            self.observer, self.event_handler = start_monitor(vehicle_code)
-            self.is_monitoring = True
+            # 检查运行环境
+            username = os.getenv('USERNAME') or os.getenv('USER')
+            if not username:
+                raise ValueError("无法获取用户名")
+                
+            log_path = os.path.join('C:', 'Users', username, 'AppData', 'Local', 'SquadGame', 'Saved', 'Logs', 'SquadGame.log')
+            self.log_message(f"环境检查:")
+            self.log_message(f"程序运行位置: {os.getcwd()}")
+            self.log_message(f"日志文件路径: {log_path}")
+            self.log_message(f"日志文件存在: {os.path.exists(log_path)}")
             
-            # 更新按钮状态
-            self.start_button.configure(state='disabled')
-            self.stop_button.configure(state='normal')
+            # 检查文件权限
+            try:
+                with open(log_path, 'r') as f:
+                    self.log_message("日志文件可以正常读取")
+            except PermissionError:
+                self.log_message("警告: 无法读取日志文件，权限不足")
+                messagebox.showwarning("警告", "无法读取日志文件，请以管理员身份运行程序")
+                return
+            except Exception as e:
+                self.log_message(f"警告: 读取日志文件时出错 - {str(e)}")
             
-            self.log_message(f"已选择载具: {self.vehicle_var.get()}")
-            self.log_message("监控已启动")
+            # 从选择的字符串中提取载具代码
+            vehicle_code = self.vehicle_var.get().split('(')[1].strip(')')
             
-            # 启动检查任务完成状态的定时器
-            self.check_task_completion()
-            
+            # 启动监控
+            try:
+                monitor_result = start_monitor(vehicle_code)
+                self.observer, self.event_handler = monitor_result
+                self.is_monitoring = True
+                
+                self.start_button.configure(state='disabled')
+                self.stop_button.configure(state='normal')
+                
+                self.log_message(f"当前用户: {username}")
+                self.log_message(f"已选择载具: {self.vehicle_var.get()}")
+                self.log_message("监控已启动")
+                
+                self.check_task_completion()
+                
+            except Exception as e:
+                self.log_message(f"启动监控失败: {str(e)}")
+                raise
+                
         except Exception as e:
-            messagebox.showerror("错误", f"启动监控时出错：{str(e)}")
+            error_msg = f"错误: {str(e)}\n类型: {type(e).__name__}"
+            self.log_message(error_msg)
+            messagebox.showerror("错误", error_msg)
             
     def stop_monitoring(self):
         if self.observer:
