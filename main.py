@@ -10,7 +10,6 @@ from pynput.keyboard import Controller, Key
 Apc = {
     "TANK": "TANK",
     "BTR82A": "3030",
-    "MTLB": "mtlb",
     "BMP1": "bmp1",
     "BMP2": "bmp2",
     "BMP3": "bmp3",
@@ -20,6 +19,7 @@ Apc = {
     "BLDL": "BLDL",
     "ZBL08": "0808",
     "BMD4M": "4M4M",
+    "VMK": "VMK",
     "ZCCRWS": "ZCCRWS",
 
 }
