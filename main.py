@@ -18,6 +18,7 @@ Apc = {
     "LAV": "lav",
     "BLDL": "BLDL",
     "ZBL08": "0808",
+    "ZBD04": "0404",
     "BMD4M": "4M4M",
     "VMK": "VMK",
     "ZCCRWS": "ZCCRWS",
@@ -34,6 +35,7 @@ class LogMonitor(FileSystemEventHandler):
         self.task_completed = False
         self.current_vehicle = vehicle_code or "3030"  # 允许外部设置载具代码
 
+    # 该方法在v1.x.0版本中尚未投入使用
     def set_vehicle(self, vehicle_code):
         """设置当前载具代码"""
         self.current_vehicle = vehicle_code
@@ -82,6 +84,7 @@ class LogMonitor(FileSystemEventHandler):
         # 输入命令
         command = f'CreateSquad "{self.current_vehicle}" 1' # 创建小队 载具名称     
         for char in command:
+            time.sleep(0.1)
             self.keyboard.press(char)
             self.keyboard.release(char)
         print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] 已输入命令: {command}")
@@ -98,7 +101,7 @@ def start_monitor(vehicle_code):
     event_handler = LogMonitor(vehicle_code)
     
     log_dir = os.path.dirname(event_handler.log_file)
-    observer.schedule(event_handler, path=log_dir, recursive=False)
+    observer.schedule(event_handler, path=log_dir, recursive=False) # 开始监控日志文件夹
     observer.start()
     
     # 查找载具名称
